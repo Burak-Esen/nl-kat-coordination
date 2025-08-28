@@ -2,20 +2,21 @@ import io
 import logging
 from collections.abc import Iterable
 from typing import Any, TypedDict
+from typing_extensions import NotRequired
+from datetime import datetime
 
 import yaml
-from models.ooi.findings import Finding, FindingType
 from pydantic import ValidationError
-from typing_extensions import NotRequired
 
-from boefjes.job_models import NormalizerDeclaration, NormalizerOutput
+from boefjes.normalizer_models import NormalizerDeclaration, NormalizerOutput
 from octopoes.models import OOI, Reference
+from octopoes.models.types import OOI_TYPES as CONCRETE_OOI_TYPES
+from octopoes.models.ooi.findings import Finding, FindingType
 from octopoes.models.ooi.certificate import SubjectAlternativeName
 from octopoes.models.ooi.dns.records import DNSRecord
 from octopoes.models.ooi.geography import GeographicPoint
 from octopoes.models.ooi.network import NetBlock, Network
 from octopoes.models.ooi.web import IPAddress, WebURL
-from octopoes.models.types import OOI_TYPES as CONCRETE_OOI_TYPES
 
 
 class OOITypeEntry(TypedDict):
@@ -104,7 +105,15 @@ def create_oois(ooi_dict: dict, reference_cache: dict, oois_list: list):
     ooi = ooi_type(**kwargs)
     # Save to cache
     cache[cache_field_name] = ooi
-    oois_list.append(NormalizerDeclaration(ooi=ooi))
+    # - Valid time here
+    if ooi_dict["ooi_type"] in ("Report", "ReportRecipe"):
+        logger.info("=====YML-NORMALIZER====")
+        logger.info(ooi_dict["valid_time"])
+        logger.info("=======================")
+        oois_list.append(NormalizerDeclaration(ooi=ooi, valid_time=datetime.fromisoformat(ooi_dict["valid_time"])))
+    else:
+        oois_list.append(NormalizerDeclaration(ooi=ooi))
+        
     return ooi
 
 

@@ -631,6 +631,9 @@ class XTDBOOIRepository(OOIRepository):
             self.session.add((XTDBOperationType.DELETE, str(ooi.reference), end_valid_time))
 
         # Update event, instead of create
+        logger.info("=======OCTOPOES=========")
+        logger.info(valid_time)
+        logger.info("========================")
         event = OOIDBEvent(
             operation_type=OperationType.CREATE if old_ooi is None else OperationType.UPDATE,
             valid_time=valid_time,

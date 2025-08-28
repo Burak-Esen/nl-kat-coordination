@@ -159,7 +159,7 @@ class LocalNormalizerHandler(NormalizerHandler):
                         source_method=normalizer_meta.raw_data.boefje_meta.boefje.id,
                         ooi=declaration.ooi,
                         task_id=normalizer_meta.id,
-                        valid_time=normalizer_meta.raw_data.boefje_meta.ended_at,
+                        valid_time=declaration.valid_time if declaration.valid_time is not None else normalizer_meta.raw_data.boefje_meta.ended_at,
                     )
                 )
 

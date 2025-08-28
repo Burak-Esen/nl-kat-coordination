@@ -4,24 +4,25 @@ from typing import Literal, TypeAlias
 from pydantic import BaseModel
 
 from octopoes.models import DeclaredScanProfile
-from octopoes.models.types import OOIType
+from octopoes.models.types import OOI
 
 
 class NormalizerObservation(BaseModel):
     type: Literal["observation"] = "observation"
     input_ooi: str
-    results: list[OOIType]
+    results: list[OOI]
 
 
 class NormalizerDeclaration(BaseModel):
     type: Literal["declaration"] = "declaration"
-    ooi: OOIType
+    ooi: OOI
+    valid_time: datetime | None = None
     end_valid_time: datetime | None = None
 
 
 class NormalizerAffirmation(BaseModel):
     type: Literal["affirmation"] = "affirmation"
-    ooi: OOIType
+    ooi: OOI
 
 
 class NormalizerResults(BaseModel):
@@ -31,4 +32,4 @@ class NormalizerResults(BaseModel):
     scan_profiles: list[DeclaredScanProfile] = []
 
 
-NormalizerOutput: TypeAlias = OOIType | NormalizerDeclaration | NormalizerAffirmation | DeclaredScanProfile
+NormalizerOutput: TypeAlias = OOI | NormalizerDeclaration | NormalizerAffirmation | DeclaredScanProfile

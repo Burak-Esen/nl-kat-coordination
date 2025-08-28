@@ -40,14 +40,16 @@ class YAMLData(TypedDict):
 
 YML_CRITERIA = [
     _(
-        'All objects should be stored in "oois" list field at root level. '
-        'Only objects under "oois" field will be created unless they are referenced by an object placed in "oois"'
+      'All objects should be stored in the "oois" list at the root level. '
+      'Only objects under the "oois" field will be created, unless they are referenced by an object within "oois".'
     ),
-    _("It can create various of object type in a single file"),
-    _('Each object should contain an extra field called "ooi_type" that determines ooi type, it\'s case-sensitive'),
+    _("Objects of various types can be included in a single file."),
     _(
-        "You can use YAML referencing. "
-        'Storing referenced objects in the "references" field is suggested for the next possible updates.'
+      'Each object must contain an additional field called "ooi_type", which specifies the object type. '
+      'This field is case-sensitive.'),
+    _(
+      "YAML referencing is supported. "
+      'It is recommended to store referenced objects in the "references" field to facilitate potential future updates.'
     ),
 ]
 
