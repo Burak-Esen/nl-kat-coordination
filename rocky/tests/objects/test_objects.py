@@ -7,7 +7,7 @@ from django.urls import resolve, reverse
 from pytest_django.asserts import assertContains, assertNotContains
 from tools.models import Indemnification
 
-from octopoes.models import ScanLevel, ScanProfileType
+from octopoes.models import ScanLevel
 from octopoes.models.exception import ObjectNotFoundException
 from octopoes.models.ooi.dns.zone import Hostname
 from octopoes.models.ooi.network import Network
@@ -32,7 +32,7 @@ def test_ooi_list(rf, client_member, mock_organization_view_octopoes):
     response = OOIListView.as_view()(request, organization_code=client_member.organization.code)
 
     assert response.status_code == 200
-    assert mock_organization_view_octopoes().list_objects.call_count == 2
+    assert mock_organization_view_octopoes().list_objects.call_count == 1
     assertContains(response, "testnetwork")
 
 
@@ -53,18 +53,12 @@ def test_ooi_list_with_clearance_type_filter_and_clearance_level_filter(
     response = OOIListView.as_view()(request, organization_code=client_member.organization.code)
 
     assert response.status_code == 200
-    assert mock_organization_view_octopoes().list_objects.call_count == 2
+    assert mock_organization_view_octopoes().list_objects.call_count == 1
 
     list_call_0 = mock_organization_view_octopoes().list_objects.call_args_list[0]
-    assert list_call_0.kwargs["limit"] == 0
+    assert list_call_0.kwargs["limit"] == 150
     assert list_call_0.kwargs["scan_level"] == {ScanLevel.L0, ScanLevel.L1}
-    assert list_call_0.kwargs["scan_profile_type"] == {ScanProfileType.DECLARED, ScanProfileType.INHERITED}
-
-    list_call_1 = mock_organization_view_octopoes().list_objects.call_args_list[1]
-    assert list_call_1.kwargs["limit"] == 150
-    assert list_call_1.kwargs["offset"] == 0
-    assert list_call_1.kwargs["scan_level"] == {ScanLevel.L0, ScanLevel.L1}
-    assert list_call_1.kwargs["scan_profile_type"] == {ScanProfileType.DECLARED, ScanProfileType.INHERITED}
+    assert list_call_0.kwargs["scan_profile_type"] == {"declared", "inherited"}
 
     assertContains(response, "testnetwork")
     assertContains(response, "Showing 150 of 200 objects")
@@ -463,9 +457,10 @@ def test_ooi_list_filtered_export_csv(rf, client_member, mock_organization_view_
     assert mock_organization_view_octopoes().list_objects.call_count == 1
 
     mock_calls = mock_organization_view_octopoes().list_objects.mock_calls
-    assert list(mock_calls[0].kwargs["scan_level"])[0].value == 3
-    assert mock_calls[0].args[0].pop() == Network
-    assert list(mock_calls[0].kwargs["scan_profile_type"])[0].value == "inherited"
+    assert list(mock_calls[0].kwargs["scan_level"])[0] == 3
+    popped_ooi_type = mock_calls[0].args[0].pop()
+    assert popped_ooi_type == "Network"
+    assert list(mock_calls[0].kwargs["scan_profile_type"])[0] == "inherited"
 
 
 @pytest.mark.parametrize("member", ["superuser_member", "admin_member", "redteam_member"])

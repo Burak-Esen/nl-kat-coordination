@@ -15,13 +15,14 @@ https://summoning.team/blog/vmware-vrealize-network-insight-ssh-key-rce-cve-2023
 """
 
 import os
+import subprocess
 
 
 def run(boefje_meta: dict) -> list[tuple[set, str | bytes]]:
     input_ = boefje_meta["arguments"]["input"]  # input is IPService
     ip_port = input_["ip_port"]
     if input_["service"]["name"] != "ssh":
-        return [({"info/boefje"}, "Skipping because service is not an ssh service")]
+        return [({"openkat/deschedule"}, "Skipping because service is not an ssh service")]
 
     ip = ip_port["address"]["address"]
     port = ip_port["port"]
@@ -35,7 +36,7 @@ def run(boefje_meta: dict) -> list[tuple[set, str | bytes]]:
                 key_file,
                 "support@" + ip,
                 "-p",
-                port,
+                str(port),
                 "-o",
                 "StrictHostKeyChecking=no",
                 "-o",
@@ -43,11 +44,11 @@ def run(boefje_meta: dict) -> list[tuple[set, str | bytes]]:
                 "-o",
                 "BatchMode=yes",
                 "exit",
-                "2>/dev/null",
             ]
             try:
-                coutput = os.system(" ".join(ssh_command))  # noqa: S605
-                if coutput not in (0, 32512):  # 0 = it worked, 32512 = `exit` does not exists but we did connect
+                result = subprocess.run(ssh_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                coutput = result.returncode
+                if coutput not in (0, 127):  # 0 = it worked, 127 = `exit` does not exists but we did connect
                     continue
                 return [
                     (

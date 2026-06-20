@@ -2,7 +2,7 @@
 name = "rocky"
 version = "0.0.1.dev1"
 description = "KAT's Django front-end"
-authors = [{ name = "MinVWS", email = "maintainer@openkat.nl" }]
+authors = [{ name = "Stichting LibreKAT", email = "maintainer@librekat.nl" }]
 requires-python = ">=3.10"
 license = "EUPL-1.2"
 dependencies = [
@@ -20,7 +20,6 @@ dependencies = [
     "djangorestframework>=3.16.0,<4",
     "django-tagulous>=2.1.0,<3",
     "drf-standardized-errors>=0.14.1,<0.15",
-    "django-compressor",
     "django-weasyprint>=2.4.0,<3",
     "strenum>=0.4.15,<0.5",
     "django-rest-knox>=5.0.2,<6",
@@ -31,7 +30,7 @@ dependencies = [
     "whitenoise[brotli]>=6.5.0,<7",
     "opentelemetry-instrumentation",
     "opentelemetry-instrumentation-fastapi",
-    "granian>=2.5",
+    "granian>=2.7.4",
     "django-components>=0.88,<0.89",
     "pyparsing>=3.1.1,<4",
     "pydantic-settings>=2.0.3,<3",
@@ -52,6 +51,12 @@ dependencies = [
     "django-structlog>=9.1.1,<10",
     "weasyprint>=66",
     "pyyaml>=6.0.3",
+    "requests>=2.33.0,<3",
+    "attrs>=26.1.0",
+    "pillow>=12.2.0",
+    "brotlicffi>=1.2.0.1",
+    "urllib3>=2.7.0",
+    "idna>=3.15",
 ]
 
 [dependency-groups]
@@ -72,6 +77,7 @@ dev = [
     "robotframework-debuglibrary>=2.5.0,<3",
     "robotframework-otp>=1.1.0,<2",
     "robotframework-postgresqldb>=2.0.0,<3",
+    "setuptools>=81,<82",
 ]
 
 [tool.uv]
@@ -79,7 +85,6 @@ package = false
 
 [tool.uv.sources]
 django-admin-auto-tests = { git = "https://github.com/dekkers/django-admin-auto-tests", rev = "f6eb4cbb9112b5aa933313d79e4da823adb41e1e" }
-django-compressor = { git = "https://github.com/dekkers/django-compressor.git", rev = "csp-nonce" }
 
 [tool.coverage.run]
 relative_files = true
